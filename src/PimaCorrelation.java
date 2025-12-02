@@ -1,4 +1,7 @@
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class PimaCorrelation {
 
@@ -41,21 +44,36 @@ public class PimaCorrelation {
     }
 
     public static void main(String[] args) {
-        // TODO: Replace sample data with Pima Indians Diabetes Dataset https://www.kaggle.com/datasets/uciml/pima-indians-diabetes-database
+        String filename = "diabetes.csv";
+        FileInputStream file = null;
+        try {
+            file = new FileInputStream(filename);
+        }
+        catch (FileNotFoundException e) {
+            System.err.println("File " + filename + " not found. Exiting program.");
+            System.exit(1);
+        }
+        int col = 1;
+        Scanner reader = new Scanner(file);
+        String line = reader.nextLine();
+        String[] data = line.split(",");
+        System.out.println("Reading column \"" + data[col] + "\" and \"Outcome\"");
+
+        int sampleSize = 0;
         ArrayList<Double> X = new ArrayList<>();
-        X.add(15.0);
-        X.add(18.0);
-        X.add(21.0);
-        X.add(24.0);
-        X.add(27.0);
-
         ArrayList<Double> Y = new ArrayList<>();
-        Y.add(25.0);
-        Y.add(25.0);
-        Y.add(27.0);
-        Y.add(31.0);
-        Y.add(32.0);
+        while (reader.hasNextLine()) {
+            line = reader.nextLine();
+            data = line.split(",");
+            if (!data[col].equals("0")) {
+                X.add(Double.parseDouble(data[col]));
+                Y.add(Double.parseDouble(data[8]));
+                //System.out.println(X.getLast() + ", " + Y.getLast());
+                sampleSize++;
+            }
+        }
 
+        System.out.println("Sample Size: " + sampleSize);
         // Function call to correlationCoefficient
         System.out.printf("%6f\n", Correlation(X, Y));
     }
